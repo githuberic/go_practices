@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.17.3
-// source: pb/data.proto
+// source: protocol/data.proto
 
 package proto
 
@@ -294,5 +294,5 @@ var _Hello_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb/data.proto",
+	Metadata: "protocol/data.proto",
 }
