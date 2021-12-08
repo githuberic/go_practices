@@ -12,3 +12,5 @@ func TestAdd(t *testing.T) {
 	user.Mobile = "13588827425"
 	user.Add()          //user.id = 1，添加之后user中的id会变成数据库中生成的值
 }
+
+

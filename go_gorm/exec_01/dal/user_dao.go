@@ -7,9 +7,9 @@ import (
 
 type User struct {
 	Id      int    `gorm:"primary_key" json:"id"`
-	Name    string `json:"name"`
-	Address string `json:"address"`
-	Mobile  string `json:"mobile"`
+	Name    string `gorm:"not null;"`
+	Address string `gorm:"not null;"`
+	Mobile  string `gorm:"mobile"`
 }
 
 //添加数据
@@ -19,7 +19,7 @@ func (user *User) Add() {
 
 	err := conn.Create(user).Error
 	if err != nil {
-		fmt.Println("创建失败")
+		fmt.Printf("创建失败 %v", err)
 	}
 }
 
