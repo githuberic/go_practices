@@ -14,12 +14,12 @@ type User struct {
 }
 
 func dbConn(User, Password, Host, Db string, Port int) string {
-	connArgs := fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", User, Password, Host, Port, Db)
+	connArgs := fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8&autocommit=true&parseTime=True&loc=Local", User, Password, Host, Port, Db)
 	return connArgs
 }
 
 func main() {
-	conn := dbConn("root", "root_mysql", "127.0.0.1", "data_center", 3307)
+	conn := dbConn("root", "root_mysql", "127.0.0.1", "db_user", 3307)
 	//db, err := gorm.Open("mysql", "root:@(localhost:3307)/root_mysql")
 	db, err := gorm.Open("mysql", conn)
 	if err != nil {
@@ -41,7 +41,7 @@ func main() {
 	db.AutoMigrate(&User{})
 
 	// 插入
-	//db.Create(&User{Name: "L1213", Address: "杭州", Mobile: "13588827425"})
+	db.Create(&User{Name: "L1213", Address: "杭州", Mobile: "13588827425"})
 
 	// 读取
 	var user User
