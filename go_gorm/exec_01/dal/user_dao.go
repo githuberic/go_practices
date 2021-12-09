@@ -1,15 +1,23 @@
-package dal
+package main
 
 import (
 	"fmt"
 	"go_practices/go_gorm/exec_01/db"
 )
 
+/*
 type User struct {
 	Id      int    `gorm:"primary_key" json:"id"`
 	Name    string `gorm:"not null;"`
 	Address string `gorm:"not null;"`
 	Mobile  string `gorm:"mobile"`
+}*/
+
+type User struct {
+	Id      int    `gorm:"primary_key" json:"id"`
+	Name    string `json:"name"`
+	Address string `json:"string"`
+	Mobile  string `json:"mobile"` //1:男、2:女
 }
 
 //添加数据

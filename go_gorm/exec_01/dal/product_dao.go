@@ -1,4 +1,4 @@
-package dal
+package main
 
 import (
 	"fmt"
@@ -32,15 +32,15 @@ func main() {
 	db.AutoMigrate(&Product{})
 
 	// 插入
-	db.Create(&Product{Code: "L1212", Price: 1000})
+	db.Create(&Product{Code: "L1213", Price: 1200})
 
 	// 读取
 	var product Product
 	db.First(&product, 1)                   // 查询id为1的product
-	db.First(&product, "code = ?", "L1212") // 查询code为l1212的product
+	db.First(&product, "code = ?", "L1213") // 查询code为l1212的product
 
 	// 更新
-	db.Model(&product).Update("Price", 2000)
+	db.Model(&product).Update("Price", 2100)
 
 	// 删除
 	db.Delete(&product)
