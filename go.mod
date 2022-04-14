@@ -10,6 +10,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.1 // indirect
+	github.com/urfave/cli v1.22.5
 	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
