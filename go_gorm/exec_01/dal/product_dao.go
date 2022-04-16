@@ -32,16 +32,20 @@ func main() {
 	db.AutoMigrate(&Product{})
 
 	// 插入
-	db.Create(&Product{Code: "L1213", Price: 1200})
+	//db.Create(&Product{Code: "L1213", Price: 1200})
 
 	// 读取
 	var product Product
-	db.First(&product, 1)                   // 查询id为1的product
-	db.First(&product, "code = ?", "L1213") // 查询code为l1212的product
+	db.First(&product, 1) // 查询id为1的product
+	fmt.Printf("%#v\n", product)
+
+	db.Find(&product, "code = ?", "L1213") // 查询code为l1212的product
+	fmt.Printf("%#v\n", product)
 
 	// 更新
-	db.Model(&product).Update("Price", 2100)
+	db.Model(&product).Update("price", 2200)
 
+	//db.Create(&Product{Code: "L1213", Price: 1200})
 	// 删除
-	db.Delete(&product)
+	//db.Delete(&product)
 }
