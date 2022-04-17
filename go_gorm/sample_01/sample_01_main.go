@@ -98,7 +98,6 @@ func CreatePerson(c *gin.Context) {
 	catchException(c)
 
 	var person Person
-	//c.BindJSON(&person)
 	err := c.BindJSON(&person)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{
@@ -109,6 +108,7 @@ func CreatePerson(c *gin.Context) {
 		return
 	}
 
+	db := Dbinit()
 	create := db.Create(&person)
 	if create.RowsAffected > 0 {
 		c.JSON(http.StatusBadGateway, gin.H{
