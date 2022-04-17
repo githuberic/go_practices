@@ -1,15 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"go_practices/go_gorm/db_conn"
 	"net/http"
-	"strings"
 )
-
-var db *gorm.DB
-var err error
 
 type Person struct {
 	ID        uint   `json:"id" gorm:"primaryKey;autoIncrement"`
@@ -18,6 +15,10 @@ type Person struct {
 	Mobile    string `json:"mobile" gorm:"type:varchar(20);not null"`
 	City      string `json:"city" gorm:"type:varchar(50);not null"`
 }
+
+/*
+var db *gorm.DB
+var err error
 
 func NewConn() *gorm.DB {
 	const (
@@ -30,25 +31,6 @@ func NewConn() *gorm.DB {
 	}
 	return db
 }
-
-/*
-func init() {
-	const (
-		conn = "mysql://root:root_mysql@tcp(127.0.0.1:3307)/data_center?autocommit=true&charset=utf8"
-	)
-	DBEngine := strings.Replace(conn, "mysql://", "", -1)
-	db, err := gorm.Open("mysql", DBEngine)
-	if err != nil {
-		panic("failed to connect database")
-	}
-
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
-
-	// 启用Logger，显示详细日志
-	db.LogMode(true)
-}*/
-
 func Dbinit() *gorm.DB {
 	db := NewConn()
 
@@ -66,6 +48,17 @@ func Dbinit() *gorm.DB {
 	//	&Model.UserAuthsModel{},
 	//)
 	return db
+}
+*/
+
+func init() {
+	db_conn.MysqlInit()
+	db_conn.DB.AutoMigrate(&Person{})
+	if !db_conn.DB.HasTable(&Person{}) {
+		if err := db_conn.DB.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&Person{}).Error; err != nil {
+			panic(err)
+		}
+	}
 }
 
 /*
@@ -108,8 +101,7 @@ func CreatePerson(c *gin.Context) {
 		return
 	}
 
-	db := Dbinit()
-	create := db.Create(&person)
+	create := db_conn.DB.Create(&person)
 	if create.RowsAffected > 0 {
 		c.JSON(http.StatusBadGateway, gin.H{
 			"code": http.StatusOK,
@@ -118,26 +110,61 @@ func CreatePerson(c *gin.Context) {
 		})
 		return
 	}
-
-	/*
-		db = Dbinit()
-		db.Create(&person)
-		c.JSON(200, person)*/
 }
 
-/*
 func GetPerson(c *gin.Context) {
+	catchException(c)
+
 	id := c.Params.ByName("id")
 
 	var person Person
-	db = Dbinit()
-	if err := db.Where("id = ?", id).First(&person).Error; err != nil {
-		c.AbortWithStatus(404)
+	if err := db_conn.DB.Where("id=?", id).First(&person).Error; err != nil {
+		//c.AbortWithStatus(404)
 		fmt.Println(err)
 	} else {
-		c.JSON(200, person)
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  "success",
+			"data": person,
+		})
 	}
 }
+
+func UpdatePerson(c *gin.Context) {
+	catchException(c)
+
+	var person Person
+	err := c.BindJSON(&person)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{
+			"code": http.StatusBadGateway,
+			"msg":  "参数错误",
+			"data": err,
+		})
+		return
+	}
+	fmt.Println(person)
+
+	updates := db_conn.DB.Where("id=?", person.ID).Updates(&person)
+	if updates.RowsAffected > 0 {
+		c.JSON(http.StatusBadGateway, gin.H{
+			"code": http.StatusOK,
+			"msg":  "更新成功",
+			"data": "ok",
+		})
+		return
+	} else {
+		c.JSON(http.StatusBadGateway, gin.H{
+			"code": http.StatusOK,
+			"msg":  "更新失败",
+			"data": updates.Error,
+		})
+		return
+	}
+}
+
+/*
+
 
 func GetPeople(c *gin.Context) {
 	var people []Person
@@ -165,18 +192,10 @@ func catchException(c *gin.Context) {
 }
 
 func main() {
-	db := Dbinit()
-
-	db.AutoMigrate(&Person{})
-	if !db.HasTable(&Person{}) {
-		if err := db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&Person{}).Error; err != nil {
-			panic(err)
-		}
-	}
-
 	r := gin.Default()
-	//localhost:8080/people {"id":4,"firstname":"Elvis","lastname":"Presley","city":"beijing"}
 	r.POST("/people/create", CreatePerson)
+	r.GET("/people/:id", GetPerson)
+	r.POST("/person/update", UpdatePerson)
 
 	/*
 		//localhost:8080/people

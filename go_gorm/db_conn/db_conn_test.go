@@ -1,4 +1,4 @@
-package main
+package db_conn
 
 import (
 	"fmt"
