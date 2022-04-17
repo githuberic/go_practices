@@ -16,43 +16,9 @@ type Person struct {
 	City      string `json:"city" gorm:"type:varchar(50);not null"`
 }
 
-/*
-var db *gorm.DB
-var err error
-
-func NewConn() *gorm.DB {
-	const (
-		conn = "mysql://root:root_mysql@tcp(127.0.0.1:3307)/data_center?autocommit=true&charset=utf8mb4"
-	)
-	DBEngine := strings.Replace(conn, "mysql://", "", -1)
-	db, err := gorm.Open("mysql", DBEngine)
-	if err != nil {
-		panic("DB connection fail:" + err.Error())
-	}
-	return db
-}
-func Dbinit() *gorm.DB {
-	db := NewConn()
-
-	//SetMaxOpenConns用于设置最大打开的连接数
-	//SetMaxIdleConns用于设置闲置的连接数
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
-
-	// 启用Logger，显示详细日志
-	db.LogMode(true)
-
-	// 自动迁移模式
-	//db.AutoMigrate(&Model.UserModel{},
-	//	&Model.UserDetailModel{},
-	//	&Model.UserAuthsModel{},
-	//)
-	return db
-}
-*/
-
 func init() {
 	db_conn.MysqlInit()
+
 	db_conn.DB.AutoMigrate(&Person{})
 	if !db_conn.DB.HasTable(&Person{}) {
 		if err := db_conn.DB.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&Person{}).Error; err != nil {
@@ -60,32 +26,6 @@ func init() {
 		}
 	}
 }
-
-/*
-func DeletePerson(c *gin.Context) {
-	id := c.Params.ByName("id")
-	var person Person
-	db = Dbinit()
-	d := db.Where("id = ?", id).Delete(&person)
-	fmt.Println(d)
-	c.JSON(200, gin.H{"id #" + id: "deleted"})
-}
-
-func UpdatePerson(c *gin.Context) {
-	var person Person
-	id := c.Params.ByName("id")
-
-	db = Dbinit()
-	if err := db.Where("id = ?", id).First(&person).Error; err != nil {
-		c.AbortWithStatus(404)
-		fmt.Println(err)
-	}
-	c.BindJSON(&person)
-
-	db.Save(&person)
-	c.JSON(200, person)
-}
-*/
 
 func CreatePerson(c *gin.Context) {
 	catchException(c)
@@ -130,6 +70,29 @@ func GetPerson(c *gin.Context) {
 	}
 }
 
+func GetMultiplePerson(c *gin.Context) {
+	catchException(c)
+
+	lastname := c.Params.ByName("lastname")
+
+	persons := make([]Person, 10)
+	tx := db_conn.DB.Where("last_name=?", lastname).Find(&persons).Limit(10)
+	if tx.Error != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusBadGateway,
+			"msg":  "error",
+			"data": tx.Error,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  "success",
+			"data": persons,
+		})
+	}
+	return
+}
+
 func UpdatePerson(c *gin.Context) {
 	catchException(c)
 
@@ -145,7 +108,18 @@ func UpdatePerson(c *gin.Context) {
 	}
 	fmt.Println(person)
 
-	updates := db_conn.DB.Where("id=?", person.ID).Updates(&person)
+	// 判定是否存在
+	personExist := Person{}
+	if err := db_conn.DB.First(&personExist, "id=?", person.ID).Error; err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{
+			"code": http.StatusOK,
+			"msg":  "更新失败",
+			"data": err,
+		})
+		return
+	}
+
+	updates := db_conn.DB.Model(&Person{}).Where("id=?", person.ID).Updates(&person)
 	if updates.RowsAffected > 0 {
 		c.JSON(http.StatusBadGateway, gin.H{
 			"code": http.StatusOK,
@@ -163,20 +137,26 @@ func UpdatePerson(c *gin.Context) {
 	}
 }
 
-/*
+func DeletePerson(c *gin.Context) {
+	catchException(c)
 
-
-func GetPeople(c *gin.Context) {
-	var people []Person
-	db = Dbinit()
-	if err := db.Find(&people).Error; err != nil {
-		c.AbortWithStatus(404)
-		fmt.Println(err)
+	id := c.Params.ByName("id")
+	tx := db_conn.DB.Where("id=?", id).Delete(&Person{})
+	if tx.RowsAffected > 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  "删除成功",
+			"data": "ok",
+		})
 	} else {
-		c.JSON(200, people)
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"msg":  "删除失败",
+			"data": tx.Error,
+		})
 	}
 }
-*/
+
 func catchException(c *gin.Context) {
 	// 捕获异常
 	defer func() {
@@ -193,20 +173,10 @@ func catchException(c *gin.Context) {
 
 func main() {
 	r := gin.Default()
-	r.POST("/people/create", CreatePerson)
-	r.GET("/people/:id", GetPerson)
+	r.POST("/person/create", CreatePerson)
+	r.GET("/person/:id", GetPerson)
+	r.GET("/person/multiple/:lastname", GetMultiplePerson)
 	r.POST("/person/update", UpdatePerson)
-
-	/*
-		//localhost:8080/people
-		r.GET("/people/", GetPeople)
-		//localhost:8080/people/1
-		r.GET("/people/:id", GetPerson)
-
-		//localhost:8080/people {"id":4,"firstname":"Elvis","lastname":"Presley","city":"beijing"}
-		r.PUT("/people/:id", UpdatePerson)
-		//localhost:8080/people/1
-		r.DELETE("/people/:id", DeletePerson)
-	*/
+	r.DELETE("/person/delete/:id", DeletePerson)
 	r.Run(":8080")
 }
