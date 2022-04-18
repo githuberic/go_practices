@@ -171,12 +171,21 @@ func catchException(c *gin.Context) {
 	}()
 }
 
+/**
+//people/create,curl -X POST -H "Content-type: application/json" -d '{"id":3,"firstname":"YingYing","lastname":"Liu","mobile":"13588827431","city":"HangZhou"}' 'http://localhost:8080/person/create'
+//people/get,curl -l 'localhost:8080/person/3'
+//people/multiple,curl -l 'localhost:8080/person/multiple/Liu'
+//people/update,curl -X POST -H "Content-type: application/json" -d '{"id":6,"firstname":"Guojian","lastname":"Liu","mobile":"13855556666","city":"Handan"}' 'http://localhost:8080/person/update'
+//people/delete,curl -l 'localhost:8080/person/delete/7'
+*/
 func main() {
 	r := gin.Default()
+
 	r.POST("/person/create", CreatePerson)
 	r.GET("/person/:id", GetPerson)
 	r.GET("/person/multiple/:lastname", GetMultiplePerson)
 	r.POST("/person/update", UpdatePerson)
-	r.DELETE("/person/delete/:id", DeletePerson)
+	r.GET("/person/delete/:id", DeletePerson)
+
 	r.Run(":8080")
 }
