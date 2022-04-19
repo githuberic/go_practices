@@ -1,4 +1,4 @@
-package utils
+package db_conn
 
 import (
 	"fmt"
@@ -30,12 +30,12 @@ var mysqlConfig = mysqlModel{
 	MaxOpenConn: 100,
 	Debug:       false,
 	IsPlural:    true,
-	TablePrefix: "tb_",
+	TablePrefix: "t_",
 }
 
 func MysqlInit() error {
 	var err error
-	DbUrl := fmt.Sprintf("%s:%s&#64;(%s:%d)/%s?charset=;utf8",
+	DbUrl := fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8",
 		mysqlConfig.User,
 		mysqlConfig.Password,
 		mysqlConfig.Host,
@@ -48,6 +48,7 @@ func MysqlInit() error {
 	if DB.Error != nil {
 		fmt.Printf("database error %v", DB.Error)
 	}
+
 	//最大打开的连接数
 	DB.DB().SetMaxOpenConns(mysqlConfig.MaxOpenConn)
 	//最大空闲连接数

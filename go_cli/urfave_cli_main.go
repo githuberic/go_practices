@@ -9,6 +9,7 @@ import (
 func main() {
 	app := cli.NewApp()
 
+	// Flags 用于设置参数。
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "lang",
@@ -17,6 +18,7 @@ func main() {
 		},
 	}
 
+	// Action 对应的函数就是你具体对各个参数具体的处理逻辑。
 	app.Action = func(c *cli.Context) error {
 		name := "Nefertiti"
 		if c.NArg() > 0 {
