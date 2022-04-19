@@ -13,7 +13,7 @@ import (
 )
 
 /**
-@Verified
+Verified
 */
 func main() {
 	//rsa **文件产生
@@ -46,12 +46,16 @@ func GenRsaKey() (prvkey, pubkey []byte) {
 	if err != nil {
 		panic(err)
 	}
-	derStream := x509.MarshalPKCS1PrivateKey(privateKey)
+	//caPrivBytes, err := x509.MarshalPKCS8PrivateKey(caPrivkey)
+	// derStream := x509.MarshalPKCS1PrivateKey(privateKey)
+	derStream, err := x509.MarshalPKCS8PrivateKey(privateKey)
 	block := &pem.Block{
 		Type:  "RSA PRIVATE KEY",
 		Bytes: derStream,
 	}
 	prvkey = pem.EncodeToMemory(block)
+
+	// 生成公钥文件
 	publicKey := &privateKey.PublicKey
 	derPkix, err := x509.MarshalPKIXPublicKey(publicKey)
 	if err != nil {
@@ -65,20 +69,24 @@ func GenRsaKey() (prvkey, pubkey []byte) {
 	return
 }
 
-//签名
+// 签名
 func RsaSignWithSha256(data []byte, keyBytes []byte) []byte {
-	h := sha256.New()
-	h.Write(data)
-	hashed := h.Sum(nil)
 	block, _ := pem.Decode(keyBytes)
 	if block == nil {
 		panic(errors.New("private key error"))
 	}
-	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+	var private interface{}
+	private, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
 		fmt.Println("ParsePKCS8PrivateKey err", err)
 		panic(err)
 	}
+	privateKey := private.(*rsa.PrivateKey)
+
+	h := sha256.New()
+	h.Write(data)
+	hashed := h.Sum(nil)
 
 	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashed)
 	if err != nil {
@@ -137,11 +145,16 @@ func RsaDecrypt(ciphertext, keyBytes []byte) []byte {
 	if block == nil {
 		panic(errors.New("private key error!"))
 	}
+
 	//解析PKCS1格式的私钥
-	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	var private interface{}
+	private, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
+		fmt.Println("ParsePKCS8PrivateKey err", err)
 		panic(err)
 	}
+	priv := private.(*rsa.PrivateKey)
+
 	// 解密
 	data, err := rsa.DecryptPKCS1v15(rand.Reader, priv, ciphertext)
 	if err != nil {
