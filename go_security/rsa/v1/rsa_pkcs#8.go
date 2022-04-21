@@ -46,8 +46,7 @@ func GenRsaKey() (prvkey, pubkey []byte) {
 	if err != nil {
 		panic(err)
 	}
-	//caPrivBytes, err := x509.MarshalPKCS8PrivateKey(caPrivkey)
-	// derStream := x509.MarshalPKCS1PrivateKey(privateKey)
+
 	derStream, err := x509.MarshalPKCS8PrivateKey(privateKey)
 	block := &pem.Block{
 		Type:  "RSA PRIVATE KEY",
