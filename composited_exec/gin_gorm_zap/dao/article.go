@@ -2,8 +2,8 @@ package dao
 
 import (
 	"fmt"
-	"go_practices/composited_exec/gin_gorm_viper/global"
-	"go_practices/composited_exec/gin_gorm_viper/model"
+	"go_practices/composited_exec/gin_gorm_zap/global"
+	"go_practices/composited_exec/gin_gorm_zap/model"
 )
 
 //select一条记录
@@ -34,6 +34,8 @@ func SelectAllArticle(pageOffset int, pageSize int) ([]*model.Article, error) {
 	rows, err := global.DBLink.Select(fields).Table(model.Article{}.TableName()).Where("isPublish=?", 1).Offset(pageOffset).Limit(pageSize).Rows()
 
 	if err != nil {
+		fmt.Println("sql is error:")
+		fmt.Println(err)
 		return nil, err
 	}
 
