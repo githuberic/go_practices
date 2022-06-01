@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_practices/composited_exec/gin_gorm_01/controller"
+	"go_practices/composited_exec/gin_gorm/controller"
 )
 
 func Router() *gin.Engine {

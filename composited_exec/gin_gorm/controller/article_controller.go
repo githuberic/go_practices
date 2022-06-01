@@ -1,9 +1,8 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"go_practices/composited_exec/gin_gorm_01/service"
+	"go_practices/composited_exec/gin_gorm/service"
 	"net/http"
 	"strconv"
 )
@@ -20,18 +19,14 @@ curl -X GET 'http://localhost:8080/article/getone/3'
 */
 func (a *ArticleController) GetOne(c *gin.Context) {
 	id := c.Params.ByName("id")
-	fmt.Println("id:" + id)
-
 	articleId, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		c.AbortWithStatus(400)
-		fmt.Println(err.Error())
 	}
 
 	articleOne, err := service.GetOneArticle(articleId)
 	if err != nil {
 		c.AbortWithStatus(404)
-		fmt.Println(err.Error())
 	} else {
 		c.JSON(http.StatusOK, &articleOne)
 	}
@@ -47,7 +42,6 @@ func (a *ArticleController) GetList(c *gin.Context) {
 	pageInt, err := strconv.Atoi(page)
 	if err != nil {
 		c.AbortWithStatus(400)
-		fmt.Println(err.Error())
 	}
 
 	pageSize := 2
@@ -55,7 +49,6 @@ func (a *ArticleController) GetList(c *gin.Context) {
 	articles, err := service.GetArticleList(pageOffset, pageSize)
 	if err != nil {
 		c.AbortWithStatus(404)
-		fmt.Println(err.Error())
 	} else {
 		c.JSON(http.StatusOK, &articles)
 	}

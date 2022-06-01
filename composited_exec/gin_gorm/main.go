@@ -2,8 +2,8 @@ package main
 
 import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"go_practices/composited_exec/gin_gorm_01/global"
-	"go_practices/composited_exec/gin_gorm_01/router"
+	"go_practices/composited_exec/gin_gorm/global"
+	"go_practices/composited_exec/gin_gorm/router"
 	"log"
 )
 

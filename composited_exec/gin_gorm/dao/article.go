@@ -1,9 +1,8 @@
 package dao
 
 import (
-	"fmt"
-	"go_practices/composited_exec/gin_gorm_01/global"
-	"go_practices/composited_exec/gin_gorm_01/model"
+	"go_practices/composited_exec/gin_gorm/global"
+	"go_practices/composited_exec/gin_gorm/model"
 )
 
 func SelectOneArticle(articleId int64) (*model.Article, error) {
@@ -31,21 +30,15 @@ func SelectcountAll() (int, error) {
 func SelectAllArticle(pageOffset int, pageSize int) ([]*model.Article, error) {
 	fields := []string{"articleId", "subject", "url"}
 	rows, err := global.DBLink.Select(fields).Table(model.Article{}.TableName()).Where("isPublish=?", 1).Offset(pageOffset).Limit(pageSize).Rows()
-
 	if err != nil {
-		fmt.Println("sql is error:")
-		fmt.Println(err)
 		return nil, err
 	}
 
-	//fmt.Println(rows.)
 	defer rows.Close()
 	var articles []*model.Article
 	for rows.Next() {
 		r := &model.Article{}
 		if err := rows.Scan(&r.ArticleId, &r.Subject, &r.Url); err != nil {
-			fmt.Println("rows.next:")
-			fmt.Println(err)
 			return nil, err
 		}
 		articles = append(articles, r)

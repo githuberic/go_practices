@@ -1,8 +1,8 @@
 package service
 
 import (
-	"go_practices/composited_exec/gin_gorm_01/dao"
-	"go_practices/composited_exec/gin_gorm_01/model"
+	"go_practices/composited_exec/gin_gorm/dao"
+	"go_practices/composited_exec/gin_gorm/model"
 )
 
 /***
