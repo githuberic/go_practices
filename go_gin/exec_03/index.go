@@ -2,7 +2,7 @@ package exec_03
 
 import (
 	"github.com/gin-gonic/gin"
-	c "go_practices/go_Gin/exec_03/route"
+	c "go_practices/go_gin/exec_03/route"
 )
 
 func main() {

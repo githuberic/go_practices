@@ -3,9 +3,9 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go_practices/go_Gin/exec_02/controller/forth"
-	"go_practices/go_Gin/exec_02/controller/second"
-	"go_practices/go_Gin/exec_02/controller/third"
+	"go_practices/go_gin/exec_02/controller/forth"
+	"go_practices/go_gin/exec_02/controller/second"
+	"go_practices/go_gin/exec_02/controller/third"
 )
 
 func GinRouter(r *gin.Engine) *gin.Engine {

@@ -34,7 +34,7 @@ func AccessLog() gin.HandlerFunc {
 			"%s %d %d %dµs " +
 			"\"%s\""
 
-		layout := "2006-01-02 15:04:05"
+		layout := "2006-param-02 15:04:05"
 		timeNow := time.Now().Format(layout)
 
 		global.AccessLogger.Infof(s,

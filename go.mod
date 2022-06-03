@@ -18,6 +18,7 @@ require (
 	github.com/lestrrat/go-strftime v0.0.0-20180220042222-ba3bf9c1d042 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.11.0
+	github.com/stretchr/testify v1.7.1
 	github.com/urfave/cli v1.22.5
 	go.uber.org/zap v1.17.0
 	golang.org/x/net v0.0.0-20220412020605-290c469a71a5

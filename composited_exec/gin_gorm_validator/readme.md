@@ -1,2 +1,2 @@
 ## 概述
-gin接口统一返回restful格式的数据
+gin用go-playground/validator做参数的校验

@@ -3,7 +3,7 @@ package route
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go_practices/go_Gin/exec_03/controller"
+	"go_practices/go_gin/exec_03/controller"
 )
 
 func GinRouter(r *gin.Engine) *gin.Engine {

@@ -3,8 +3,8 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	ms "go_practices/go_Gin/exec_03/model"
-	ss "go_practices/go_Gin/exec_03/services"
+	ms "go_practices/go_gin/exec_03/model"
+	ss "go_practices/go_gin/exec_03/services"
 )
 
 func Routers(r *gin.RouterGroup) {
