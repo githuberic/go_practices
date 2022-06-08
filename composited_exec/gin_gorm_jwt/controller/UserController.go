@@ -19,8 +19,8 @@ func NewUserController() UserController {
 
 //用户登录
 func (u *UserController) Login(c *gin.Context) {
-	fmt.Println("user login begin")
 	result := result.NewResult(c)
+
 	param := request.LoginRequest{
 		UserName: c.Param("username"),
 		PassWord: c.Param("password"),
@@ -40,19 +40,12 @@ func (u *UserController) Login(c *gin.Context) {
 		// 没有错误则密码匹配
 		if err != nil {
 			result.Error(1001, "账号信息错误")
-			//return false
 		} else {
-			//生成token并返回
-			fmt.Println("begin gentoken:")
-			fmt.Println(param.UserName)
-
 			tokenString, _ := jwt.GenToken(param.UserName)
-
 			m := map[string]string{
-				"tokenString": tokenString,
+				"tokenStr": tokenString,
 			}
 			result.Success(m)
-			//return
 		}
 	}
 	return
@@ -74,32 +67,14 @@ func (u *UserController) Info(c *gin.Context) {
 
 //生成用户pass
 func (u *UserController) Pass(c *gin.Context) {
-	//origpassword := c.MustGet("password").(string)
-	origpassword := c.Query("password")
-	fmt.Println("password:" + origpassword)
-	fmt.Println("user pass begin")
+	oPwd := c.Query("password")
+
 	result := result.NewResult(c)
 
-	hashPwd, _ := bcrypt.GenerateFromPassword([]byte(origpassword), bcrypt.DefaultCost)
-
-	/*
-		//compare
-		err := bcrypt.CompareHashAndPassword(hashPwd, []byte("124"))
-		parse:=""
-		if (err == nil) {
-			parse="true"
-		} else {
-			parse = "false"
-		}
-		// 没有错误则密码匹配
-		if err != nil {
-			log.Println(err)
-		}
-	*/
+	hashPwd, _ := bcrypt.GenerateFromPassword([]byte(oPwd), bcrypt.DefaultCost)
 	m := map[string]string{
-		"origpassword": origpassword,
-		"password":     string(hashPwd),
-		//"parse":parse,
+		"origin-password": oPwd,
+		"crypt-password":  string(hashPwd),
 	}
 	result.Success(m)
 

@@ -1,7 +1,7 @@
 package global
 
 import (
-	"go_practices/composited_exec/gin_gorm_viper/pkg/setting"
+	"go_practices/composited_exec/gin_gorm_jwt/pkg/setting"
 	"time"
 )
 

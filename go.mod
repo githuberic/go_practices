@@ -26,6 +26,7 @@ require (
 	github.com/tebeka/strftime v0.1.5 // indirect
 	github.com/urfave/cli v1.22.5
 	go.uber.org/zap v1.17.0
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/net v0.0.0-20220412020605-290c469a71a5
 	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.28.0
